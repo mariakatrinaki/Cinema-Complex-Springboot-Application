@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec=http://www.thymeleaf.org/extras/spring-security
+      xmlns:shiro=http://www.pollix.at/thymeleaf/shiro>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <style>
+
+        #content {
+            position: fixed;
+
+            top: 100px;
+            margin-top: 60px;
+        }
+    </style>
+
+</head>
+<body style="height:2000px">
+
+<div class="container">
+    <div th:replace = "~{Fragments/navigation :: navigationVisitor}"></div>
+
+
+</div>
+
+<div class="container-sm m-3" id="content">
+
+
+
+        <div class="row">
+              <span th:if="${#lists.isEmpty(orders)}">
+                <h3>My Orders are empty</h3>
+                </span>
+            <span th:unless="${#lists.isEmpty(orders)}">
+              <p class="text-center">
+                <h4>My Orders</h4>
+                </p>
+
+            <div class="table-responsive col-md-6">
+            <form class="form-horizontal" id="editProducts" th:action ="@{/OrdersProducts}">
+              <table class="table table-striped">
+  <thead>
+    <tr>
+
+      <th scope="col">A/A</th>
+      <th scope="col">Paid</th>
+      <th scope="col"> Cost</th>
+       <th scope="col">Ticket</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr th:each="item,status: ${orders}">
+
+
+
+      <td th:text="${status.index+1}"> </td>
+       <td th:text="${item.orderStatus}"></td>
+        <td th:text="${item.totalCost}+' Euros'"></td>
+     <td >
+
+         <!--"|books[${itemStat.index}].id|"-->
+	  <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+              data-bs-target="#displayOrder"
+              th:attr="data-bs-whatever= *{orders[__${status.index}__].loopOrderDetails()}">
+             Display Order
+      </button>
+
+</td>
+
+
+       <span th:if="${item.orderStatus=='Not Paid'}">
+      <td>
+     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#statusOrder" >Pay Order</button>
+     </td>
+     </span>
+        <span th:unless="${item.orderStatus=='Not Paid'}">
+      <td>
+       #
+     </td>
+     </span>
+
+
+
+
+
+    </tr>
+
+
+
+  </tbody>
+</table>
+
+
+
+
+</form>
+ </div>
+
+
+
+
+
+</span>
+ </div>
+</div>
+ <!--th:attr="id='DisplayOrder'+*{item.idOrder}"-->
+<!-- Modal -->
+<div class="modal fade" id="displayOrder" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+               <p></p>
+
+            </div>
+
+            <div class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<div class="modal fade" id="statusOrder" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5 class="modal-title" id="exampleModalLabel">CREDIT/DEBIT CARD PAYMENT</h5>
+
+
+                    </div>
+
+                    <div class="col-md-6 text-right" style="margin-top: -5px;">
+
+                        <img src="https://img.icons8.com/color/36/000000/visa.png">
+                        <img src="https://img.icons8.com/color/36/000000/mastercard.png">
+                        <img src="https://img.icons8.com/color/36/000000/amex.png">
+
+                    </div>
+
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="PayOrder"  th:action="@{/changeStatusOrder}" th:object="${orders}" method="post" >
+                   <span th:each="order : ${orders}" th:if="${order.getOrderStatus() == 'Not Paid'}">
+                  <input type="hidden" name="idOrder" th:value="${order.idOrder}">
+                      </span>
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="cc-number" class="control-label">
+                            <h5 class="modal-title">CARD NUMBER</h5>
+                        </label>
+                        <input id="cc-number" type="tel" class="input-lg form-control cc-number" autocomplete="cc-number" placeholder="&bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull;" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cc-exp" class="control-label">
+                            <h5 class="modal-title">CARD EXPIRY</h5>
+
+                        </label>
+                        <input id="cc-exp" type="tel" class="input-lg form-control cc-exp" autocomplete="cc-exp" placeholder="&bull;&bull; / &bull;&bull;" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cc-cvc" class="control-label">
+                            <h5 class="modal-title">CARD CVC</h5></label>
+                        <input id="cc-cvc" type="tel" class="input-lg form-control cc-cvc" autocomplete="off" placeholder="&bull;&bull;&bull;&bull;" required>
+                    </div>
+
+
+                </div>
+              </span>
+            </form>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-secondary" form ="PayOrder" name="action" value="Pay" >Pay Order</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+<!--<div th:replace = "~{Fragments/footer :: footer}"></div>-->
+
+<script>
+    var exampleModal = document.getElementById('displayOrder')
+    exampleModal.addEventListener('show.bs.modal', function (event) {
+        // Button that triggered the modal
+        var button = event.relatedTarget
+        // Extract info from data-bs-* attributes
+        var recipient = button.getAttribute('data-bs-whatever')
+        // If necessary, you could initiate an AJAX request here
+        // and then do the updating in a callback.
+        //
+        // Update the modal's content.
+        var modalTitle = exampleModal.querySelector('.modal-title')
+        var modalBodyInput = exampleModal.querySelector('.modal-body p')
+
+        modalTitle.textContent = 'Order Details'
+        modalBodyInput.innerHTML = recipient
+    })
+
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+
+
+</body>
+</html>

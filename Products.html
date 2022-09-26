@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec=http://www.thymeleaf.org/extras/spring-security
+      xmlns:shiro=http://www.pollix.at/thymeleaf/shiro>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <style>
+
+        #content {
+            position: absolute;
+            top: 100px;
+            /*
+            background-color: #9F9F9F;
+            background-image: url("/assets/img/Holy-Mountain-cover.jpg");
+
+             */
+
+        }
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            opacity: 1;
+            width: 30px;
+            height: 30px;
+        }
+    </style>
+</head>
+<body style="height:2000px" >
+
+<div class="container">
+    <div th:replace = "~{Fragments/navigation :: navigationVisitor}"></div>
+
+
+</div>
+<div class="container-sm m-3" id="content">
+    <p class="text-center"> <h4>Products List</h4></p>
+
+    <form class="form-horizontal" id="addProducts" th:action ="@{/addProducts}"  th:object="${orderResponse}" method="post">
+        <div class="row">
+
+            <div class="table-responsive col-md-6">
+                <h4>Foods</h4>
+                <table class = "table table-striped">
+                    <thead class = "table-dark">
+                    <th scope ="row">Id</th>
+                    <th scope ="row">Name</th>
+                    <th scope ="row">Photo</th>
+                    <th scope="row">Quantity</th>
+                    <th scope="row">Price</th>
+                    <th scope ="row">Add to Cart</th>
+                    </thead>
+                    <tbody>
+
+                    <tr th:each="item,iterStart : ${productList}" th:if="${iterStart.count<8}">
+
+                        <td   th:text ="${item.idProduct}"></td>
+                        <td   th:text = "${item.productName}"></td>
+                        <td ><img  th:src="@{'/assets/img/'+${item.image}}" style="width: 3rem;"> </td>
+
+                            <td>
+
+                                <input type = "number"    name=quantities min="0" max="999" >
+                            </td>
+                                <td th:text="${item.price}"></td>
+
+                            </td>
+
+
+                        <td>
+
+                            <div class ="ui checkbox">
+                            <input  type ="checkbox"    th:field= "*{products}" th:value="${item.getIdProduct()}" >
+
+                        </div>
+
+                        </td>
+
+                        </tr>
+                    </tbody>
+
+
+                </table>
+            </div>
+            <div class="table-responsive col-md-6">
+                <h4>Drinks</h4>
+                <table class = "table table-striped">
+                    <thead class = "table-dark">
+                    <th scope ="row">Id</th>
+                    <th scope ="row">Name</th>
+                    <th scope ="row">Photo</th>
+                     <th scope ="row">Quantity</th>
+                    <th scope ="row">Price</th>
+                    <th scope ="row">Add to Cart</th>
+                    </thead>
+                    <tbody>
+
+
+
+                    <tr th:each="item,iterStart : ${productList}" th:unless="${iterStart.count<8}">
+
+                        <td th:text ="${item.getIdProduct()}"></td>
+                        <td th:text = "${item.getProductName()}"></td>
+                        <td><img  th:src="@{'/assets/img/'+${item.image}}" style="width: 3rem;"> </td>
+                        <td>
+
+                            <input type = "number"  name=quantities   min="0" max="999" >
+                        </td>
+                        </td>
+                        <td th:text="${item.price}"></td>
+
+                        </td>
+
+
+                        <td>
+
+                            <div  class ="ui checkbox" >
+                            <input  type ="checkbox"    th:field= "*{products}" th:value="${item.getIdProduct()}" >
+
+                        </div>
+
+                        </td>
+
+                    </tr>
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+
+    <div class ="d-grid gap-2 d-md-flex justify-content-md-end">
+        <button class ="btn btn-primary me-md-2"  form ="addProducts" type="submit">AddToCart</button>
+    </div>
+
+
+
+</div>
+<!--<div th:replace = "~{Fragments/footer :: footer}"></div>-->
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+</body>
+</html>

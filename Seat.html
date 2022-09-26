@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
+   <!-- <script type="text/javascript" src="../js/Seat.js" th:src="@{/Seat.js}"></script>-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <style>
+
+        #content {
+
+
+            top: 100px;
+            position: absolute;
+
+        }
+
+
+
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div th:replace = "~{Fragments/navigation :: navigationVisitor}"></div>
+
+
+</div>
+
+<div class="container-sm m-3" id="content">
+    <br>
+
+    <div class="row">
+
+        <div class="table-responsive col-md-4">
+            <p>Seat</p>
+
+            <span th:each = "seat :${ticketDto.getNonSelectedSeats()}">
+            <span th:if="${ticketDto.getSelectedSeats().contains(seat.getIdSeat())}">
+            <button
+                    type="button" name="item" th:value="${seat.getIdSeat()}" style="background-color:red" disabled>
+
+
+                 <img src="/assets/img/cinemaSeat.png">
+            </button>
+                </span>
+                 <span th:unless="${ticketDto.getSelectedSeats().contains(seat.getIdSeat())}" >
+            <button
+                    type="button"  th:id="${seat.getNumberSeat()}" name="item" th:value="${seat.getNumberSeat()}"
+                    onclick="changeColor(this)" style="background-color: white">
+
+                   <img src="/assets/img/cinemaSeat.png">
+                    <!--
+                    th:data-id="${seat.getNumberSeat()}"
+                    onclick="changeColor(this,this.getAttribute('data-id'))"
+                    -->
+
+            </button>
+                </span>
+
+
+
+                </span>
+        </div>
+        <div class="table-responsive col-md-6">
+
+            <div class="form-group row">
+                <label for="Title" class="col-sm-2 col-form-label">Title</label>
+                <div class="col-sm-5">
+                    <input type="text"  class="form-control" id="Title" th:placeholder="${ticketDto.getMovie().getTitle()}" readonly>
+                </div>
+            </div>
+            <br>
+            <div class="form-group row">
+                <label for="Duration" class="col-sm-2 col-form-label">Duration</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control" id="Duration" th:placeholder="${ticketDto.getMovie().movieDuration}" readonly>
+                </div>
+            </div>
+            <br>
+            <div class="form-group row">
+                <label for="Showtime" class="col-sm-2 col-form-label">Show Time</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control" id="Showtime" th:placeholder="${ticketDto.showTime.getStartMovie()}" readonly>
+                </div>
+            </div>
+            <br>
+            <div class="form-group row">
+                <label for="Price" class="col-sm-2 col-form-label">Ticket Price</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control" id="Price" th:placeholder="${ticketDto.getMovie().price}" readonly>
+                </div>
+            </div>
+            <br>
+            <div class="form-group row">
+                <label for="seatNumbers" class="col-sm-2 col-form-label">Seat Numbers</label>
+                <div class="col-sm-5">
+                    <input type="text"  class="form-control" id="seatNumbers"  readonly>
+                </div>
+            </div>
+
+            <div class ="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#BookingMovie" >Submit</button>
+            </div>
+
+
+        </div>
+    </div>
+
+</div>
+<!--Modal-->
+
+<div class="modal fade" id="BookingMovie" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5 class="modal-title" id="exampleModalLabel">CREDIT/DEBIT CARD PAYMENT</h5>
+
+
+                    </div>
+
+                    <div class="col-md-6 text-right" style="margin-top: -5px;">
+
+                        <img src="https://img.icons8.com/color/36/000000/visa.png">
+                        <img src="https://img.icons8.com/color/36/000000/mastercard.png">
+                        <img src="https://img.icons8.com/color/36/000000/amex.png">
+
+                    </div>
+
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="submitTicket"  th:action="@{/BookingSeat}" th:object="${ticketDto}" method="post" >
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="cc-number" class="control-label">
+                            <h5 class="modal-title">CARD NUMBER</h5>
+                        </label>
+                        <input id="cc-number" type="tel" class="input-lg form-control cc-number" autocomplete="cc-number" placeholder="&bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull;" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cc-exp" class="control-label">
+                            <h5 class="modal-title">CARD EXPIRY</h5>
+
+                        </label>
+                        <input id="cc-exp" type="tel" class="input-lg form-control cc-exp" autocomplete="cc-exp" placeholder="&bull;&bull; / &bull;&bull;" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cc-cvc" class="control-label">
+                            <h5 class="modal-title">CARD CVC</h5></label>
+                        <input id="cc-cvc" type="tel" class="input-lg form-control cc-cvc" autocomplete="off" placeholder="&bull;&bull;&bull;&bull;" required>
+                    </div>
+
+                    <input type="hidden" name="seatNumbers" class="form-control" id="seatNumbersHidden"  readonly>
+                      <!--
+                    <div class="mb-3">
+                        <label th:text="'Total Cost: '+${order.totalCost} +'Euros'" class="control-label"></label>
+
+
+                    </div>
+                    -->
+                </div>
+            </form>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-secondary" form ="submitTicket" name="action" value="Pay" >Pay Ticket</button>
+                <button type="submit" class="btn btn-secondary" form ="submitTicket" name="action" value="Not Paid" >Register Ticket</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+<script th:inline="javascript">
+    const selections = [];
+    function changeColor(btn) {
+        var numberSeat = btn.id;
+        if (btn.style.backgroundColor == 'white') {
+            btn.style.backgroundColor = 'lightblue';
+            btn.style.color = 'black';
+
+            console.log('value number seat'+numberSeat);
+            selections.push(btn.id);
+
+
+
+        } else {
+            btn.style.backgroundColor = 'white';
+            btn.style.color = 'black';
+           // numberSeat = '';
+           // document.getElementById("seatNumbers").value = numberSeat;
+           // document.getElementById("seatNumbersHidden").value= numberSeat;
+           // console.log('value number seat'+numberSeat);
+            let index = selections.indexOf(btn.id);
+            if (index !== -1) {
+                selections.splice(index, 1);
+            }
+        }
+        document.getElementById("seatNumbers").value = selections.join(", ");
+        document.getElementById("seatNumbersHidden").value= selections.join(", ");
+
+
+    };
+
+
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+</body>
+</html>

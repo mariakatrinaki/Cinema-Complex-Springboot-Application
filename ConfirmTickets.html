@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <style>
+
+        #content {
+            position: fixed;
+
+            top: 100px;
+            margin-top: 60px;
+        }
+    </style>
+
+</head>
+<body>
+<div class="container">
+    <div th:replace = "~{Fragments/navigation :: navigationEmployee}"></div>
+</div>
+<div class="container-sm m-3" id="content">
+
+
+
+    <div class="row">
+        <div class="table-responsive col-md-6">
+            <form class="form-horizontal" id="editProducts" th:action ="@{/ConfirmTickets}">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+
+                        <!-- <th scope="col">A/A</th>-->
+                        <th scope="col">User</th>
+                        <th scope="col">Movie</th>
+                        <th scope="col">Show Time</th>
+                        <th scope="col"> Cost</th>
+                        <th scope="col">Ticket Status</th>
+                        <th scope="col">Seat Number</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <span th:each="user,userStatus: ${users}">
+    <tr th:each="ticket,ticketStatus :${user.getTickets()}">
+
+        <!--<td th:text="${userStatus.index+1}"></td>-->
+       <td th:text="${user.userName}"> </td>
+        <td th:text="${ticket.showTime.movie.title}"> </td>
+          <td th:text="${ticket.showTime.startMovie}"> </td>
+        <td th:text="${ticket.ticketCost}"></td>
+        <td th:text="${ticket.pay}"></td>
+         <td th:text="${ticket.seat.numberSeat}"></td>
+
+
+
+           <span th:switch="${ticket.pay}">
+      <td th:case="'Not Paid'">
+     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#NotifyUser" >Notify User</button>
+     </td>
+
+
+      <td th:case="'Pay'">
+         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ConfirmTicket" >Confirm Order</button>
+     </td>
+     </span>
+
+
+         </tr>
+          </span>
+
+                    <!--
+
+                  --->
+
+
+
+
+                    </tbody>
+                </table>
+            </form>
+        </div>
+
+
+
+
+    </div>
+</div>
+
+<!-- Modal -->
+
+
+<div class="modal" id="NotifyUser" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Notify User to pay Ticket</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="ConfirmOrder" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Ticket is confirmed</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+</body>
+</html>
